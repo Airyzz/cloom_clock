@@ -11,11 +11,13 @@ class SwitchNumbers extends StatelessWidget {
   final FlareControllerEntry number;
   final double height;
   final double width;
+  final double animationStartOffset;
 
   SwitchNumbers({
-    @required this.number,
-    @required this.height,
-    @required this.width,
+    required this.number,
+    required this.height,
+    required this.width,
+    this.animationStartOffset = 0,
   });
 
   @override
@@ -26,14 +28,16 @@ class SwitchNumbers extends StatelessWidget {
         child: Stack(
           children: <Widget>[
             FlareActor(
-              this.number.previous.asset,
-              controller:
-                  NumberFlareControler(currentState: AnimationState.hide),
+              this.number.previous!.asset,
+              controller: NumberFlareControler(
+                  currentState: AnimationState.hide,
+                  animationStartOffset: animationStartOffset),
             ),
             FlareActor(
               this.number.asset,
-              controller:
-                  NumberFlareControler(currentState: AnimationState.show),
+              controller: NumberFlareControler(
+                  currentState: AnimationState.show,
+                  animationStartOffset: animationStartOffset),
             )
           ],
         ));

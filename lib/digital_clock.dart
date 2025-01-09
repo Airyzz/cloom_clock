@@ -61,8 +61,11 @@ class DigitalClock extends StatefulWidget {
 
 class _DigitalClockState extends State<DigitalClock> {
   DateTime _dateTime = DateTime.now();
-  Timer _timer;
-  FlareNumberAssets _flareAssets;
+  late Timer _timer;
+  late FlareNumberAssets _flareAssets;
+  // on the first frame, start the animation offset by this amount of time
+  // so it doesnt show previous number
+  double animationStartOffset = 1;
 
   @override
   void initState() {
@@ -70,6 +73,10 @@ class _DigitalClockState extends State<DigitalClock> {
     widget.model.addListener(_updateModel);
     _updateTime();
     _updateModel();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      animationStartOffset = 0;
+    });
   }
 
   @override
@@ -152,60 +159,73 @@ class _DigitalClockState extends State<DigitalClock> {
 
     // Draw
     return Container(
-      decoration: colors[_Element.gradient],
-      child: Stack(
-        overflow: Overflow.visible,
-        children: <Widget>[
-          // -- Hour
-          Positioned(
-            left: -10,
-            child: SwitchNumbers(
-              height: widget.numberHeight,
-              width: widget.numberWidth,
-              number: hourTensController,
-            ),
-          ),
-          // -- Hour
-          Positioned(
-            left: 120,
-            top: 40,
-            child: SwitchNumbers(
-              height: widget.numberHeight,
-              width: widget.numberWidth,
-              number: hourOnesController,
-            ),
-          ),
-          Center(
-            child: Container(
-              height: widget.numberHeight,
-              width: widget.numberWidth,
-              child: FlareActor(
-                assetDots,
-                animation: "loop",
+      decoration: colors[_Element.gradient] as Decoration,
+      child: LayoutBuilder(builder: (context, constraints) {
+        print(constraints.biggest);
+        var numberHeight = constraints.biggest.height;
+        var numberWidth = constraints.biggest.width / 3;
+
+        var horizontalOffset1 = constraints.biggest.width / 25;
+        var horizontalOffset2 = constraints.biggest.width / 7;
+        var verticalOffset = constraints.biggest.height / 13;
+        return Stack(
+          clipBehavior: Clip.none,
+          children: <Widget>[
+            // -- Hour
+            Positioned(
+              left: -horizontalOffset1,
+              child: SwitchNumbers(
+                animationStartOffset: animationStartOffset,
+                height: numberHeight,
+                width: numberWidth,
+                number: hourTensController,
               ),
             ),
-          ),
-          // -- Minutes
-          Positioned(
-            right: 120,
-            child: SwitchNumbers(
-              height: widget.numberHeight,
-              width: widget.numberWidth,
-              number: minuteTensController,
+            // -- Hour
+            Positioned(
+              left: horizontalOffset2,
+              top: verticalOffset,
+              child: SwitchNumbers(
+                animationStartOffset: animationStartOffset,
+                height: numberHeight,
+                width: numberWidth,
+                number: hourOnesController,
+              ),
             ),
-          ),
-          // -- Minutes
-          Positioned(
-            right: -10,
-            top: 40,
-            child: SwitchNumbers(
-              number: minuteOnesController,
-              height: widget.numberHeight,
-              width: widget.numberWidth,
+            Center(
+              child: Container(
+                height: numberHeight,
+                width: numberWidth,
+                child: FlareActor(
+                  assetDots,
+                  animation: "loop",
+                ),
+              ),
             ),
-          )
-        ],
-      ),
+            // -- Minutes
+            Positioned(
+              right: horizontalOffset2,
+              child: SwitchNumbers(
+                animationStartOffset: animationStartOffset,
+                height: numberHeight,
+                width: numberWidth,
+                number: minuteTensController,
+              ),
+            ),
+            // -- Minutes
+            Positioned(
+              right: -horizontalOffset1,
+              top: verticalOffset,
+              child: SwitchNumbers(
+                animationStartOffset: animationStartOffset,
+                number: minuteOnesController,
+                height: numberHeight,
+                width: numberWidth,
+              ),
+            )
+          ],
+        );
+      }),
     );
   }
 }

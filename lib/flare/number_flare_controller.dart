@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flare_dart/math/mat2d.dart';
 import 'package:flare_flutter/flare.dart';
 import 'package:flare_flutter/flare_controller.dart';
 
@@ -17,12 +16,14 @@ class NumberFlareControler extends FlareController {
   //  so they take the same time
   final double _riveCompensation = 2.1;
 
-  NumberFlareControler({this.currentState = AnimationState.show});
+  NumberFlareControler(
+      {this.currentState = AnimationState.show, this.animationStartOffset = 0});
 
+  double animationStartOffset;
   double _animationTime = 0.0;
 
-  ActorAnimation _animationIn;
-  ActorAnimation _animationOut;
+  late ActorAnimation _animationIn;
+  late ActorAnimation _animationOut;
 
   @override
   bool advance(FlutterActorArtboard artboard, double elapsed) {
@@ -50,10 +51,10 @@ class NumberFlareControler extends FlareController {
 
   @override
   void initialize(FlutterActorArtboard artboard) {
-    this._animationTime = 0.0;
-    this._animationIn = artboard.getAnimation("in");
+    this._animationTime = animationStartOffset;
+    this._animationIn = artboard.getAnimation("in")!;
     assert(_animationIn != null);
-    this._animationOut = artboard.getAnimation("out");
+    this._animationOut = artboard.getAnimation("out")!;
     assert(_animationOut != null);
   }
 
