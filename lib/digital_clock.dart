@@ -58,6 +58,9 @@ class CloomClock extends StatefulWidget {
 
   static bool isEmbedded = false;
 
+  // so it doesnt show previous number
+  static double animationStartOffset = 1;
+
   @override
   _CloomClockState createState() => _CloomClockState();
 }
@@ -70,8 +73,6 @@ class _CloomClockState extends State<CloomClock>
   late Timer _timer;
   late FlareNumberAssets _flareAssets;
   // on the first frame, start the animation offset by this amount of time
-  // so it doesnt show previous number
-  double animationStartOffset = 1;
 
   @override
   void initState() {
@@ -85,8 +86,8 @@ class _CloomClockState extends State<CloomClock>
       vsync: this,
     )..repeat(reverse: true);
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      animationStartOffset = 0;
+    Future.delayed(Duration(seconds: 1), () {
+      CloomClock.animationStartOffset = 0;
     });
   }
 
@@ -191,7 +192,6 @@ class _CloomClockState extends State<CloomClock>
                     Positioned(
                       left: -horizontalOffset1,
                       child: SwitchNumbers(
-                        animationStartOffset: animationStartOffset,
                         height: numberHeight,
                         width: numberWidth,
                         number: hourTensController,
@@ -202,7 +202,6 @@ class _CloomClockState extends State<CloomClock>
                       left: horizontalOffset2,
                       top: verticalOffset,
                       child: SwitchNumbers(
-                        animationStartOffset: animationStartOffset,
                         height: numberHeight,
                         width: numberWidth,
                         number: hourOnesController,
@@ -222,7 +221,6 @@ class _CloomClockState extends State<CloomClock>
                     Positioned(
                       right: horizontalOffset2,
                       child: SwitchNumbers(
-                        animationStartOffset: animationStartOffset,
                         height: numberHeight,
                         width: numberWidth,
                         number: minuteTensController,
@@ -233,7 +231,6 @@ class _CloomClockState extends State<CloomClock>
                       right: -horizontalOffset1,
                       top: verticalOffset,
                       child: SwitchNumbers(
-                        animationStartOffset: animationStartOffset,
                         number: minuteOnesController,
                         height: numberHeight,
                         width: numberWidth,

@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:cloom_clock/digital_clock.dart';
 import 'package:flare_flutter/flare.dart';
 import 'package:flare_flutter/flare_controller.dart';
 
@@ -16,10 +17,8 @@ class NumberFlareControler extends FlareController {
   //  so they take the same time
   final double _riveCompensation = 2.1;
 
-  NumberFlareControler(
-      {this.currentState = AnimationState.show, this.animationStartOffset = 0});
+  NumberFlareControler({this.currentState = AnimationState.show});
 
-  double animationStartOffset;
   double _animationTime = 0.0;
 
   late ActorAnimation _animationIn;
@@ -51,7 +50,7 @@ class NumberFlareControler extends FlareController {
 
   @override
   void initialize(FlutterActorArtboard artboard) {
-    this._animationTime = animationStartOffset;
+    this._animationTime = CloomClock.animationStartOffset;
     this._animationIn = artboard.getAnimation("in")!;
     assert(_animationIn != null);
     this._animationOut = artboard.getAnimation("out")!;
