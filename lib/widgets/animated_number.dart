@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:digital_clock/flare/assets_utils/numbers_assets.dart';
-import 'package:digital_clock/flare/number_flare_controller.dart';
+import 'package:cloom_clock/flare/assets_utils/numbers_assets.dart';
+import 'package:cloom_clock/flare/number_flare_controller.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 

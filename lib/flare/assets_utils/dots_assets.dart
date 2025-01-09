@@ -2,7 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:cloom_clock/digital_clock.dart';
+
 class DotsAssets {
-  static String dark = "assets/dark/dark_dots.flr";
-  static String light = "assets/light/light_dots.flr";
+  static String dark = (CloomClock.isEmbedded ? "packages/cloom_clock/" : "") +
+      "assets/dark/dark_dots.flr";
+  static String light = (CloomClock.isEmbedded ? "packages/cloom_clock/" : "") +
+      "assets/light/light_dots.flr";
 }

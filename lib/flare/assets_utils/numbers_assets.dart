@@ -4,6 +4,8 @@
 
 import 'dart:collection';
 
+import 'package:cloom_clock/digital_clock.dart';
+
 class FlareNumberAssets {
   late LinkedList<FlareControllerEntry> _flareControllersData;
 
@@ -31,7 +33,8 @@ final class FlareControllerEntry extends LinkedListEntry<FlareControllerEntry> {
   int _digit;
 
   FlareControllerEntry(this._digit, {String? lightType}) {
-    _asset = "assets/$lightType/${lightType!}_0$_digit.flr";
+    _asset = (CloomClock.isEmbedded ? "packages/cloom_clock/" : "") +
+        "assets/$lightType/${lightType!}_0$_digit.flr";
   }
 
   String get asset {

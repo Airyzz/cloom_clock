@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter_clock_helper/customizer.dart';
@@ -20,6 +21,7 @@ void main() {
     // See https://github.com/flutter/flutter/wiki/Desktop-shells#target-platform-override.
     debugDefaultTargetPlatformOverride = TargetPlatform.fuchsia;
   }
+  StreamController stream = StreamController.broadcast();
 
   // This creates a clock that enables you to customize it.
   //
@@ -30,5 +32,5 @@ void main() {
   //
   // Your job is to edit [DigitalClock], or replace it with your
   // own clock widget. (Look in digital_clock.dart for more details!)
-  runApp(ClockCustomizer((ClockModel model) => DigitalClock(model)));
+  runApp(ClockCustomizer((ClockModel model) => CloomClock(model)));
 }

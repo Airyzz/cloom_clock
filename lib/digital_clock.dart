@@ -3,8 +3,9 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:ui';
 
-import 'package:digital_clock/widgets/animated_number.dart';
+import 'package:cloom_clock/widgets/animated_number.dart';
 import 'package:flutter_clock_helper/model.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -47,19 +48,24 @@ final _darkTheme = {
 /// A basic digital clock.
 ///
 /// You can do better than this!
-class DigitalClock extends StatefulWidget {
-  const DigitalClock(this.model);
+class CloomClock extends StatefulWidget {
+  const CloomClock(this.model);
 
   final double numberWidth = 240;
   final double numberHeight = 350;
 
   final ClockModel model;
 
+  static bool isEmbedded = false;
+
   @override
-  _DigitalClockState createState() => _DigitalClockState();
+  _CloomClockState createState() => _CloomClockState();
 }
 
-class _DigitalClockState extends State<DigitalClock> {
+class _CloomClockState extends State<CloomClock>
+    with SingleTickerProviderStateMixin {
+  late AnimationController controller;
+
   DateTime _dateTime = DateTime.now();
   late Timer _timer;
   late FlareNumberAssets _flareAssets;
@@ -74,13 +80,18 @@ class _DigitalClockState extends State<DigitalClock> {
     _updateTime();
     _updateModel();
 
+    controller = AnimationController(
+      duration: Duration(minutes: 5),
+      vsync: this,
+    )..repeat(reverse: true);
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       animationStartOffset = 0;
     });
   }
 
   @override
-  void didUpdateWidget(DigitalClock oldWidget) {
+  void didUpdateWidget(CloomClock oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.model != oldWidget.model) {
       oldWidget.model.removeListener(_updateModel);
@@ -168,63 +179,70 @@ class _DigitalClockState extends State<DigitalClock> {
         var horizontalOffset1 = constraints.biggest.width / 25;
         var horizontalOffset2 = constraints.biggest.width / 7;
         var verticalOffset = constraints.biggest.height / 13;
-        return Stack(
-          clipBehavior: Clip.none,
-          children: <Widget>[
-            // -- Hour
-            Positioned(
-              left: -horizontalOffset1,
-              child: SwitchNumbers(
-                animationStartOffset: animationStartOffset,
-                height: numberHeight,
-                width: numberWidth,
-                number: hourTensController,
-              ),
-            ),
-            // -- Hour
-            Positioned(
-              left: horizontalOffset2,
-              top: verticalOffset,
-              child: SwitchNumbers(
-                animationStartOffset: animationStartOffset,
-                height: numberHeight,
-                width: numberWidth,
-                number: hourOnesController,
-              ),
-            ),
-            Center(
-              child: Container(
-                height: numberHeight,
-                width: numberWidth,
-                child: FlareActor(
-                  assetDots,
-                  animation: "loop",
+        return AnimatedBuilder(
+            animation: controller,
+            builder: (context, child) {
+              return Transform.scale(
+                scale: lerpDouble(0.9, 1.0, controller.value),
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: <Widget>[
+                    // -- Hour
+                    Positioned(
+                      left: -horizontalOffset1,
+                      child: SwitchNumbers(
+                        animationStartOffset: animationStartOffset,
+                        height: numberHeight,
+                        width: numberWidth,
+                        number: hourTensController,
+                      ),
+                    ),
+                    // -- Hour
+                    Positioned(
+                      left: horizontalOffset2,
+                      top: verticalOffset,
+                      child: SwitchNumbers(
+                        animationStartOffset: animationStartOffset,
+                        height: numberHeight,
+                        width: numberWidth,
+                        number: hourOnesController,
+                      ),
+                    ),
+                    Center(
+                      child: Container(
+                        height: numberHeight,
+                        width: numberWidth,
+                        child: FlareActor(
+                          assetDots,
+                          animation: "loop",
+                        ),
+                      ),
+                    ),
+                    // -- Minutes
+                    Positioned(
+                      right: horizontalOffset2,
+                      child: SwitchNumbers(
+                        animationStartOffset: animationStartOffset,
+                        height: numberHeight,
+                        width: numberWidth,
+                        number: minuteTensController,
+                      ),
+                    ),
+                    // -- Minutes
+                    Positioned(
+                      right: -horizontalOffset1,
+                      top: verticalOffset,
+                      child: SwitchNumbers(
+                        animationStartOffset: animationStartOffset,
+                        number: minuteOnesController,
+                        height: numberHeight,
+                        width: numberWidth,
+                      ),
+                    )
+                  ],
                 ),
-              ),
-            ),
-            // -- Minutes
-            Positioned(
-              right: horizontalOffset2,
-              child: SwitchNumbers(
-                animationStartOffset: animationStartOffset,
-                height: numberHeight,
-                width: numberWidth,
-                number: minuteTensController,
-              ),
-            ),
-            // -- Minutes
-            Positioned(
-              right: -horizontalOffset1,
-              top: verticalOffset,
-              child: SwitchNumbers(
-                animationStartOffset: animationStartOffset,
-                number: minuteOnesController,
-                height: numberHeight,
-                width: numberWidth,
-              ),
-            )
-          ],
-        );
+              );
+            });
       }),
     );
   }
